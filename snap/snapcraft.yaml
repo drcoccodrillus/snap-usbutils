@@ -1,0 +1,33 @@
+name: usbutils-snap
+base: core22
+version: '014'
+summary: Collection of USB tools to query connected USB devices
+description: |
+  This is a collection of USB tools for use on Linux and BSD systems to query what type of USB devices are connected to the system. This is to be run on a USB host (i.e. a machine you plug USB devices into), not on a USB device (i.e. a device you plug into a USB host).
+
+#grade: devel           # This is for development only.
+#confinement: devmode   # This is for development only. Unconfined snap environment. For production, use strict.
+grade: stable           # This is for releasing in the stable channel.
+confinement: strict     # This is for production only.
+
+apps:
+  lsusb:
+    command: usr/bin/lsusb
+    plugs: [home, network, raw-usb]
+  usb-devices:
+    command: usr/bin/usb-devices
+    plugs: [home, network, raw-usb]
+  usbreset:
+    command: usr/bin/usbreset
+    plugs: [home, network, raw-usb]
+
+parts:
+  # Install usbutils from apt
+  usbutils:
+    plugin: nil
+    stage-packages:
+      - usbutils
+      - libusb-1.0-0
+    override-pull: |
+      apt-get update && apt-get upgrade -y
+      snapcraftctl pull
